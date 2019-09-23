@@ -1,12 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import axios from 'axios';
 import Joke from './Joke';
 
-class Dadjoke extends Component {
+class Dadjoke extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      jokes: []
+      jokes: [],
+      loading: true
     };
 
     this.voteUp = this.voteUp.bind(this);
@@ -22,7 +23,7 @@ class Dadjoke extends Component {
         'Accept': 'application/json'
       }
     });
-
+    this.setState({ loading: false })
     this.setState({ jokes: response.data.results.map(joke => ({ ...joke, score: 0 })) })
   }
 
@@ -51,12 +52,18 @@ class Dadjoke extends Component {
 
   render() {
 
-    console.log('main render state', this.state);
     return (
-
+      this.state.loading ? <p>Loading...</p> :
       <div>
-        {this.state.jokes.map((joke) => (<Joke joke={joke.joke} score={joke.score}
-          key={joke.id} id={joke.id} voteUp={this.voteUp} voteDown={this.voteDown} />))}
+        {this.state.jokes.map((joke) => (
+          <Joke
+            joke={joke.joke}
+            score={joke.score}
+            key={joke.id}
+            id={joke.id}
+            voteUp={this.voteUp}
+            voteDown={this.voteDown}
+          />))}
       </div>
     )
   }
